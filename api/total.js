@@ -1,7 +1,17 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const token = process.env.NOTION_TOKEN;
     const dataSourceId = process.env.NOTION_DATA_SOURCE_ID;
+
+    if (!token || !dataSourceId) {
+      return res.status(500).json({
+        error: "Missing env vars",
+        detail: {
+          has_NOTION_TOKEN: Boolean(token),
+          has_NOTION_DATA_SOURCE_ID: Boolean(dataSourceId)
+        }
+      });
+    }
 
     const now = new Date();
     const year = Number(
@@ -23,7 +33,6 @@ export default async function handler(req, res) {
             { timestamp: "created_time", created_time: { before: end } }
           ]
         },
-         :contentReference[oaicite:9]{index=9}
         sorts: [{ timestamp: "created_time", direction: "ascending" }],
         ...(start_cursor ? { start_cursor } : {})
       };
@@ -59,8 +68,8 @@ export default async function handler(req, res) {
     }
 
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=60");
-    res.status(200).json({ value: sum, year });
+    return res.status(200).json({ value: sum, year });
   } catch (e) {
-    res.status(500).json({ error: "server error", detail: String(e) });
+    return res.status(500).json({ error: "server error", detail: String(e) });
   }
-}
+};
