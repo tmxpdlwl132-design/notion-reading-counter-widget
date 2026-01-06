@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    html, body { height: 100%; margin: 0; background: transparent; }
+    body {
+      display: grid;
+      place-items: center;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .wrap { display: grid; place-items: center; gap: 10px; }
+    .num {
+      font-size: 88px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .sub {
+      font-size: 12px;
+      opacity: 0.55;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="num" class="num">—</div>
+    <div id="sub" class="sub"></div>
+  </div>
+
+  <script>
+    async function load() {
+      const r = await fetch("/api/total");
+      const j = await r.json();
+      document.getElementById("num").textContent = (j.value ?? 0);
+      document.getElementById("sub").textContent = `${j.year ?? ""} Reading total`;
+    }
+    load();
+    setInterval(load, 60_000); // 1분마다 갱신
+  </script>
+</body>
+</html>
